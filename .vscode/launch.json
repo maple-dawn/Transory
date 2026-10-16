@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:Transory}",
+      "name": "Debug Transory",
+      "target": "Transory",
+      "configuration": "debug",
+      "preLaunchTask": "swift: Build Debug Transory"
+    },
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:Transory}",
+      "name": "Release Transory",
+      "target": "Transory",
+      "configuration": "release",
+      "preLaunchTask": "swift: Build Release Transory"
+    }
+  ]
+}
