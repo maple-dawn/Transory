@@ -9,6 +9,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/macOS-14%2B-blue" alt="macOS 14+">
   <img src="https://img.shields.io/badge/Swift-6-orange" alt="Swift 6">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
   <a href="https://github.com/maple-dawn/Transory/releases"><img src="https://img.shields.io/github/v/release/maple-dawn/Transory?include_prereleases" alt="Release"></a>
 </p>
 
@@ -164,3 +165,7 @@ TRANSORY_SNAPSHOT_DIR=/tmp/shots swift run Transory
 ## 贡献
 
 欢迎提交 Issue 和 Pull Request。提交 PR 前请确认 `swift build` 无警告、`swift test` 全部通过。
+
+## 许可证
+
+基于 [MIT 许可证](LICENSE) 开源。

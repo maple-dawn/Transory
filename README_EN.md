@@ -9,6 +9,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/macOS-14%2B-blue" alt="macOS 14+">
   <img src="https://img.shields.io/badge/Swift-6-orange" alt="Swift 6">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
   <a href="https://github.com/maple-dawn/Transory/releases"><img src="https://img.shields.io/github/v/release/maple-dawn/Transory?include_prereleases" alt="Release"></a>
 </p>
 
@@ -166,3 +167,7 @@ TRANSORY_SNAPSHOT_DIR=/tmp/shots swift run Transory
 ## Contributing
 
 Issues and pull requests are welcome. Before opening a PR, make sure `swift build` has no warnings and `swift test` passes.
+
+## License
+
+Released under the [MIT License](LICENSE).
