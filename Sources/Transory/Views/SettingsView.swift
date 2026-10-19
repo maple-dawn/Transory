@@ -110,9 +110,15 @@ private struct GeneralSettingsView: View {
             } header: {
                 Text("权限")
             } footer: {
-                Text("授予「屏幕录制」后需要重新打开 Transory 才会生效。")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack {
+                    Text("授予「屏幕录制」后需要重新打开 Transory 才会生效。")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Button("打开权限引导") { PermissionGuideController.shared.show() }
+                        .buttonStyle(.link)
+                        .font(.caption)
+                }
             }
 
             Section("翻译") {

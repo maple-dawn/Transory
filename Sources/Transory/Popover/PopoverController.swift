@@ -126,10 +126,13 @@ final class PopoverController {
     /// 用译文替换原 App 中选中的文字。
     func replace(_ id: String) {
         guard let text = result(for: id)?.text, !text.isEmpty else { return }
-        close()
+        // 粘贴要发给原 App，浮窗得先让出键盘焦点；钉住时只是暂时隐藏，粘贴完再显示回来。
+        let pinned = isPinned
+        if pinned { panel?.orderOut(nil) } else { close() }
         Task {
             try? await Task.sleep(for: .milliseconds(120))
             await SelectionReader.paste(text)
+            if pinned { panel?.orderFrontRegardless() }
         }
     }
 
@@ -147,21 +150,26 @@ final class PopoverController {
         if let entry = historyEntry { state.toggleFavorite(entry) }
     }
 
+    /// 钉住时，跳到别处（历史、截图、主窗口）也保留浮窗。
+    private func dismissUnlessPinned() {
+        if !isPinned { close() }
+    }
+
     func openHistory() {
-        close()
+        dismissUnlessPinned()
         state.navigation = .history
         state.showMainWindow()
     }
 
     func startScreenshot() {
-        close()
+        dismissUnlessPinned()
         state.startScreenshot?()
     }
 
     func openInMain() {
         guard let request else { return }
         let id = providerIDs.first
-        close()
+        dismissUnlessPinned()
         state.presentInMain(request: request, result: id.flatMap(result(for:)), providerID: id)
     }
 

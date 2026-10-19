@@ -56,6 +56,11 @@ enum SnapshotTool {
                 save(features.ocr.windowForSnapshot, to: "\(dir)/ocr-overlay.png")
             }
 
+            PermissionGuideController.shared.show()
+            try? await Task.sleep(for: .seconds(1.5))
+            save(PermissionGuideController.shared.windowForSnapshot, to: "\(dir)/permission-guide.png")
+            PermissionGuideController.shared.close()
+
             if let menu = NSApp.mainMenu?.items.first?.submenu,
                let index = menu.items.firstIndex(where: { $0.keyEquivalent == "," }) {
                 menu.performActionForItem(at: index)

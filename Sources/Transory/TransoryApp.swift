@@ -58,6 +58,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.features = features
         #if DEBUG
         SnapshotTool.runIfRequested(state: state, features: features)
+        if SnapshotTool.isActive { return }
         #endif
+        // 划词需要辅助功能、截图需要屏幕录制；缺一个就引导用户去开。
+        PermissionGuideController.shared.showIfNeeded()
     }
 }
