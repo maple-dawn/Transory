@@ -48,6 +48,8 @@ final class SelectionButtonController {
     // MARK: - 选区检测
 
     private func handleMouse(type: NSEvent.EventType, location: NSPoint, clickCount: Int, shift: Bool) {
+        // 点在本 App 自己的窗口（翻译按钮、浮窗）上时不处理，否则按钮会在被点到之前就收起。
+        guard !NSApp.hasVisibleWindow(at: location) else { return }
         switch type {
         case .leftMouseDown:
             hide()
@@ -170,5 +172,12 @@ private struct SelectionButton: View {
         .onHover { hovering = $0 }
         .help("翻译选中文字")
         .accessibilityLabel("翻译选中文字")
+    }
+}
+
+extension NSApplication {
+    /// 屏幕上该位置是否有本 App 的可见窗口。
+    func hasVisibleWindow(at location: NSPoint) -> Bool {
+        windows.contains { $0.isVisible && $0.frame.contains(location) }
     }
 }
