@@ -60,7 +60,16 @@ It works with cloud models such as Claude, OpenAI, Gemini, DeepSeek, OpenRouter,
 
 ### Download
 
-Download the latest version from [Releases](https://github.com/maple-dawn/Transory/releases) and drag `Transory.app` into your Applications folder.
+Download the latest `Transory-x.y.z.zip` from [Releases](https://github.com/maple-dawn/Transory/releases), unzip it and drag `Transory.app` into your Applications folder.
+
+> [!NOTE]
+> Transory isn't signed with an Apple Developer certificate or notarized yet, so macOS says it can't verify the developer the first time you open it. Use any one of these:
+>
+> - In Applications, right-click Transory, choose Open, then click Open in the dialog;
+> - or double-click it once, then click "Open Anyway" at the bottom of System Settings › Privacy & Security;
+> - or run in Terminal: `xattr -dr com.apple.quarantine /Applications/Transory.app`
+>
+> After that it opens normally.
 
 ### Build from source
 

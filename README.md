@@ -58,7 +58,16 @@
 
 ### 下载
 
-到 [Releases](https://github.com/maple-dawn/Transory/releases) 下载最新版本，把 `Transory.app` 拖进「应用程序」文件夹。
+到 [Releases](https://github.com/maple-dawn/Transory/releases) 下载最新的 `Transory-x.y.z.zip`，解压后把 `Transory.app` 拖进「应用程序」文件夹。
+
+> [!NOTE]
+> Transory 暂未使用 Apple 开发者证书签名和公证，第一次打开时 macOS 会提示「无法验证开发者」。可以任选一种方式打开：
+>
+> - 在「应用程序」里右键点 Transory，选「打开」，再在弹窗里点「打开」；
+> - 或者先双击一次，然后到「系统设置 › 隐私与安全性」底部点「仍要打开」；
+> - 或者在终端运行：`xattr -dr com.apple.quarantine /Applications/Transory.app`
+>
+> 之后就能正常打开了。
 
 ### 从源码构建
 
