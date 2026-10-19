@@ -73,7 +73,7 @@ struct MenuBarView: View {
             HStack {
                 Button("截图翻译") { state.startScreenshot?() }
                 Button("主窗口") { state.showMainWindow() }
-                SettingsLink { Text("设置…") }
+                SettingsButton { Text("设置…") }
                 Spacer()
                 Button("退出") { NSApp.terminate(nil) }
             }

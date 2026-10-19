@@ -67,7 +67,7 @@ private struct Toolbar: View {
             ToolButton("clock", help: "历史记录") { controller.openHistory() }
             ToolButton("viewfinder", help: "截图翻译") { controller.startScreenshot() }
             ToolButton("macwindow", help: "在主窗口打开") { controller.openInMain() }
-            SettingsLink {
+            SettingsButton {
                 Image(systemName: "slider.horizontal.3")
                     .frame(width: 28, height: 28)
                     .contentShape(Rectangle())
@@ -260,7 +260,6 @@ private struct ResultCard: View {
 }
 
 private struct ErrorRow: View {
-    @Environment(AppState.self) private var state
     let message: String
 
     var body: some View {
@@ -269,9 +268,8 @@ private struct ErrorRow: View {
             Text(message)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textSelection(.enabled)
-            SettingsLink { Text("去设置").fontWeight(.semibold) }
+            SettingsButton(.services(.popover)) { Text("去设置").fontWeight(.semibold) }
                 .buttonStyle(.link)
-                .simultaneousGesture(TapGesture().onEnded { state.settingsTab = .services })
         }
         .font(.system(size: 12))
         .foregroundStyle(PopoverPalette.errorText)

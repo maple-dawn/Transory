@@ -3,10 +3,11 @@ import Foundation
 /// 「添加模型服务」里可选的服务模板：选中后生成一份 `ProviderConfig`。
 public struct ProviderTemplate: Identifiable, Hashable, Sendable {
     public enum Group: String, CaseIterable, Sendable {
-        case apiKey, local, custom
+        case account, apiKey, local, custom
 
         public var title: String {
             switch self {
+            case .account: "账户登录（在浏览器中授权，无需 API Key）"
             case .apiKey: "需要 API Key"
             case .local: "本地模型（无需 Key，离线可用）"
             case .custom: "自定义"
@@ -43,12 +44,17 @@ public struct ProviderTemplate: Identifiable, Hashable, Sendable {
             baseURL: baseURL,
             model: models.first ?? "",
             temperature: kind == .anthropic ? nil : 0.3,
-            requiresAPIKey: group != .local,
+            requiresAPIKey: group == .apiKey || group == .custom,
             models: models
         )
     }
 
+    /// Codex CLI 的默认位置；添加服务时会再自动查找一次。
+    public static let defaultCodexPath = ("~/.local/bin/codex" as NSString).expandingTildeInPath
+
     public static let all: [ProviderTemplate] = [
+        ProviderTemplate(id: "chatgpt", name: "ChatGPT 账户", note: "使用 ChatGPT 订阅额度", group: .account, kind: .codex,
+                         baseURL: URL(fileURLWithPath: defaultCodexPath).absoluteString),
         ProviderTemplate(id: "anthropic", name: "Anthropic", note: "Claude 系列", group: .apiKey, kind: .anthropic,
                          baseURL: "https://api.anthropic.com", models: ProviderConfig.anthropic.models),
         ProviderTemplate(id: "openai", name: "OpenAI", note: "GPT 系列", group: .apiKey, kind: .openAICompatible,

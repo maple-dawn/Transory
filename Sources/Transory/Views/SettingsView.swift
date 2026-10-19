@@ -1,8 +1,41 @@
+import AppKit
 import SwiftUI
 import TransoryCore
 
 enum SettingsTab: Hashable {
     case general, services
+}
+
+/// 打开设置并定位到指定页面：「设置」入口打开通用页，「管理对比模型」等打开对应窗口的模型服务。
+/// 不能用 SettingsLink：它会吞掉点击，附加的手势不会执行，页面也就切不过去，只会停在上次关闭时的页面。
+struct SettingsButton<Label: View>: View {
+    enum Destination {
+        case general
+        case services(WindowScope)
+    }
+
+    @Environment(AppState.self) private var state
+    @Environment(\.openSettings) private var openSettings
+    let destination: Destination
+    @ViewBuilder let label: () -> Label
+
+    init(_ destination: Destination = .general, @ViewBuilder label: @escaping () -> Label) {
+        self.destination = destination
+        self.label = label
+    }
+
+    var body: some View {
+        Button {
+            switch destination {
+            case .general: state.settingsTab = .general
+            case .services(let scope): state.showServiceSettings(for: scope)
+            }
+            openSettings()
+            NSApp.activate()
+        } label: {
+            label()
+        }
+    }
 }
 
 struct SettingsView: View {

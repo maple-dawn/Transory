@@ -28,7 +28,7 @@ struct MainView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) {
-                SettingsLink {
+                SettingsButton {
                     Label("设置", systemImage: "gearshape")
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }

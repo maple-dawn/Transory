@@ -163,9 +163,8 @@ private struct ComparisonSection: View {
                 Text("其他模型").font(.headline)
                 Text("点击「采用」把它设为主模型").font(.caption).foregroundStyle(.secondary)
                 Spacer()
-                SettingsLink { Text("管理对比模型") }
+                SettingsButton(.services(.main)) { Text("管理对比模型") }
                     .buttonStyle(.link)
-                    .simultaneousGesture(TapGesture().onEnded { state.settingsTab = .services })
                     .font(.caption)
             }
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 240), spacing: 12)], spacing: 12) {

@@ -111,6 +111,16 @@ final class AppState {
     var settingsTab: SettingsTab = .general
     /// 是否显示「添加模型服务」面板。
     var isAddingProvider = false
+    /// 设置 › 模型服务里选中的服务。
+    var selectedServiceID: String?
+    /// 设置 › 模型服务当前在配置哪个窗口。
+    var settingsScope: WindowScope = .popover
+
+    /// 打开设置并定位到某个窗口的模型服务（配合 SettingsLink 使用）。
+    func showServiceSettings(for scope: WindowScope) {
+        settingsTab = .services
+        settingsScope = scope
+    }
 
     var navigation: SidebarItem? = .translate
 
@@ -240,7 +250,10 @@ final class AppState {
     private func loadAPIKeys() {
         #if DEBUG
         // 快照模式不碰钥匙串：调试版签名不同，读取会弹出系统授权框。
-        if SnapshotTool.isActive { return }
+        if SnapshotTool.isActive {
+            ChatGPTSession.useInMemoryStore()
+            return
+        }
         #endif
         for config in providers where config.requiresAPIKey {
             apiKeys[config.id] = keychain.apiKey(for: config.id)
@@ -426,6 +439,14 @@ final class AppState {
         let config = template.makeConfig(id: id)
         providers.append(config)
         if let scope { setEnabled(true, id: id, in: scope) }
+        if template.kind == .codex {
+            // Codex 可能装在别处，添加后自动查找一次。
+            Task {
+                if let url = await CodexCLI.locate(), let index = providers.firstIndex(where: { $0.id == id }) {
+                    providers[index].baseURL = url
+                }
+            }
+        }
         return config
     }
 
@@ -475,6 +496,9 @@ final class AppState {
     }
 
     private func saveScopes() {
+        #if DEBUG
+        if SnapshotTool.isActive { return }
+        #endif
         let raw = Dictionary(uniqueKeysWithValues: scopeProviders.map { ($0.key.rawValue, $0.value) })
         if let data = try? JSONEncoder().encode(raw) {
             UserDefaults.standard.set(data, forKey: Self.scopesKey)
@@ -492,6 +516,10 @@ final class AppState {
     }
 
     private func saveProviders() {
+        #if DEBUG
+        // 快照模式只改内存，不写入真实设置。
+        if SnapshotTool.isActive { return }
+        #endif
         if let data = try? JSONEncoder().encode(providers) {
             UserDefaults.standard.set(data, forKey: Self.providersKey)
         }

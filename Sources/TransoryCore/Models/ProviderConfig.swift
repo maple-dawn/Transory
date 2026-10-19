@@ -5,6 +5,8 @@ public enum ProviderKind: String, Codable, CaseIterable, Sendable, Identifiable 
     case openAICompatible
     case anthropic
     case gemini
+    /// 通过本机 Codex CLI 使用 ChatGPT 账户；`baseURL` 存 Codex 可执行文件的位置。
+    case codex
 
     public var id: String { rawValue }
 
@@ -13,6 +15,24 @@ public enum ProviderKind: String, Codable, CaseIterable, Sendable, Identifiable 
         case .openAICompatible: "OpenAI 兼容"
         case .anthropic: "Anthropic"
         case .gemini: "Google Gemini"
+        case .codex: "ChatGPT 账户（Codex）"
+        }
+    }
+}
+
+/// ChatGPT 账户服务的接入方式。
+public enum CodexAccess: String, Codable, CaseIterable, Sendable, Identifiable {
+    /// Transory 自己在浏览器中完成 OAuth 登录，直接调用 ChatGPT 的 Codex 后端。
+    case builtIn
+    /// 调用本机安装的 Codex CLI，登录由 Codex 管理。
+    case cli
+
+    public var id: String { rawValue }
+
+    public var displayName: String {
+        switch self {
+        case .builtIn: "ChatGPT 登录（内置）"
+        case .cli: "本机 Codex CLI"
         }
     }
 }
@@ -37,6 +57,10 @@ public struct ProviderConfig: Identifiable, Hashable, Codable, Sendable {
     public var models: [String]
     /// 去掉译文里的 `<think>…</think>` 思考过程（部分推理模型会输出）。
     public var hidesThinking: Bool
+    /// 思考程度（low / medium / high）；为 nil 时用模型默认值。目前只有 Codex 使用。
+    public var reasoningEffort: String?
+    /// ChatGPT 账户服务的接入方式；其他服务忽略。
+    public var codexAccess: CodexAccess
 
     public init(
         id: String,
@@ -50,7 +74,9 @@ public struct ProviderConfig: Identifiable, Hashable, Codable, Sendable {
         promptTemplate: String? = nil,
         requiresAPIKey: Bool = true,
         models: [String] = [],
-        hidesThinking: Bool = true
+        hidesThinking: Bool = true,
+        reasoningEffort: String? = nil,
+        codexAccess: CodexAccess = .builtIn
     ) {
         self.id = id
         self.name = name
@@ -64,11 +90,13 @@ public struct ProviderConfig: Identifiable, Hashable, Codable, Sendable {
         self.requiresAPIKey = requiresAPIKey
         self.models = models
         self.hidesThinking = hidesThinking
+        self.reasoningEffort = reasoningEffort
+        self.codexAccess = codexAccess
     }
 
     private enum CodingKeys: String, CodingKey {
         case id, name, kind, baseURL, model, temperature, isEnabled, includeInComparison
-        case promptTemplate, requiresAPIKey, models, hidesThinking
+        case promptTemplate, requiresAPIKey, models, hidesThinking, reasoningEffort, codexAccess
     }
 
     /// 兼容旧版本保存的配置：新加的字段缺失时用默认值。
@@ -86,6 +114,9 @@ public struct ProviderConfig: Identifiable, Hashable, Codable, Sendable {
         requiresAPIKey = try c.decodeIfPresent(Bool.self, forKey: .requiresAPIKey) ?? true
         models = try c.decodeIfPresent([String].self, forKey: .models) ?? []
         hidesThinking = try c.decodeIfPresent(Bool.self, forKey: .hidesThinking) ?? true
+        reasoningEffort = try c.decodeIfPresent(String.self, forKey: .reasoningEffort)
+        // 旧版本只有 Codex CLI 一种方式。
+        codexAccess = try c.decodeIfPresent(CodexAccess.self, forKey: .codexAccess) ?? .cli
     }
 
     /// 可选模型列表，确保包含当前使用的模型。

@@ -71,6 +71,13 @@ enum SnapshotTool {
                 save(settings.attachedSheet, to: "\(dir)/add-provider.png")
                 state.isAddingProvider = false
                 try? await Task.sleep(for: .milliseconds(500))
+                if let template = ProviderTemplate.all.first(where: { $0.kind == .codex }) {
+                    let config = state.addProvider(from: template, enableIn: .popover)
+                    state.selectedServiceID = config.id
+                    // 等它查询 Codex 登录状态和模型列表。
+                    try? await Task.sleep(for: .seconds(6))
+                    save(settings, to: "\(dir)/settings-chatgpt.png")
+                }
                 // 直接切外观（不改 state.theme，避免写入用户设置），检查浅色主题。
                 NSApp.appearance = NSAppearance(named: .aqua)
                 try? await Task.sleep(for: .milliseconds(800))
@@ -82,6 +89,34 @@ enum SnapshotTool {
                 try? await Task.sleep(for: .seconds(1))
                 save(NSApp.windows.first { $0 is PopoverPanel && $0.isVisible }, to: "\(dir)/popover-light.png")
                 features.popover.close()
+
+                // 关掉设置窗口，先切回「通用 / 划词浮窗」，再模拟「管理对比模型」：
+                // 重新打开时应该直接显示主窗口的模型服务。
+                settings.close()
+                state.settingsTab = .general
+                state.settingsScope = .popover
+                try? await Task.sleep(for: .milliseconds(500))
+                state.showServiceSettings(for: .main)
+                if let menu = NSApp.mainMenu?.items.first?.submenu,
+                   let index = menu.items.firstIndex(where: { $0.keyEquivalent == "," }) {
+                    menu.performActionForItem(at: index)
+                }
+                try? await Task.sleep(for: .seconds(1.5))
+                let reopened = NSApp.windows.first { $0.isVisible && ($0.title == "模型服务" || $0.title == "通用") }
+                print("snapshot: 重新打开设置 → 标题「\(reopened?.title ?? "无")」，范围 \(state.settingsScope.title)")
+                save(reopened, to: "\(dir)/settings-reopen.png")
+
+                // 再模拟侧栏的「设置」：停在模型服务时关闭，重新打开应回到通用页。
+                reopened?.close()
+                try? await Task.sleep(for: .milliseconds(500))
+                state.settingsTab = .general
+                if let menu = NSApp.mainMenu?.items.first?.submenu,
+                   let index = menu.items.firstIndex(where: { $0.keyEquivalent == "," }) {
+                    menu.performActionForItem(at: index)
+                }
+                try? await Task.sleep(for: .seconds(1.5))
+                let general = NSApp.windows.first { $0.isVisible && ($0.title == "模型服务" || $0.title == "通用") }
+                print("snapshot: 点击设置 → 标题「\(general?.title ?? "无")」")
             }
             NSApp.terminate(nil)
         }

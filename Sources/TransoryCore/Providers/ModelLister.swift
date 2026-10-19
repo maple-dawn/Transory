@@ -3,6 +3,12 @@ import Foundation
 /// 「从服务商获取」：查询服务商当前可用的模型名。
 public enum ModelLister {
     public static func fetch(_ config: ProviderConfig, apiKey: String, session: URLSession = .shared) async throws -> [String] {
+        if config.kind == .codex {
+            switch config.codexAccess {
+            case .builtIn: return try await ChatGPTProvider.models(session: .shared(for: config.id), urlSession: session)
+            case .cli: return try await CodexCLI.models(executable: config.baseURL)
+            }
+        }
         if config.requiresAPIKey && apiKey.isEmpty { throw ProviderError.missingAPIKey }
         let (data, response) = try await session.data(for: makeRequest(config, apiKey: apiKey))
         guard let http = response as? HTTPURLResponse else { throw ProviderError.invalidResponse }
@@ -18,6 +24,8 @@ public enum ModelLister {
         case .openAICompatible:
             request = URLRequest(url: config.baseURL.appending(path: "models"))
             if !apiKey.isEmpty { request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "authorization") }
+        case .codex:
+            preconditionFailure("Codex 的模型列表由 CodexCLI.models 读取")
         case .anthropic:
             request = URLRequest(url: config.baseURL.appending(path: "v1/models").appending(queryItems: [URLQueryItem(name: "limit", value: "100")]))
             request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
@@ -33,6 +41,8 @@ public enum ModelLister {
     static func parse(_ data: Data, kind: ProviderKind) throws -> [String] {
         let ids: [String]
         switch kind {
+        case .codex:
+            ids = try CodexCLI.parseModels(data)
         case .openAICompatible, .anthropic:
             // OpenAI 与 Anthropic 都是 {"data": [{"id": "..."}]}
             struct Response: Decodable {

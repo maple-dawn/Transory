@@ -4,17 +4,17 @@ import TransoryCore
 /// 设置 › 模型服务：左边选窗口和服务（开关决定该窗口用不用），右边是所选服务的配置。
 struct ServicesSettingsView: View {
     @Environment(AppState.self) private var state
-    @State private var scope: WindowScope = .popover
-    @State private var selectedID: String?
     @State private var confirmRemove = false
 
     var body: some View {
         @Bindable var state = state
+        let scope = state.settingsScope
         let ordered = state.orderedProviders(for: scope)
+        let selectedID = state.selectedServiceID
 
         HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 10) {
-                Picker("为哪个窗口配置", selection: $scope) {
+                Picker("为哪个窗口配置", selection: $state.settingsScope) {
                     ForEach(WindowScope.allCases) { Text($0.title).tag($0) }
                 }
                 .pickerStyle(.segmented)
@@ -25,7 +25,7 @@ struct ServicesSettingsView: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                List(selection: $selectedID) {
+                List(selection: $state.selectedServiceID) {
                     ForEach(ordered) { config in
                         ServiceRow(config: config, scope: scope)
                             .tag(config.id)
@@ -66,15 +66,20 @@ struct ServicesSettingsView: View {
             Divider()
 
             if let id = selectedID, let binding = binding(for: id) {
-                ServiceDetailView(config: binding)
-                    .id(id)
+                if binding.wrappedValue.kind == .codex {
+                    CodexServiceView(config: binding)
+                        .id(id)
+                } else {
+                    ServiceDetailView(config: binding)
+                        .id(id)
+                }
             } else {
                 ContentUnavailableView("选择一个服务", systemImage: "cpu", description: Text("或点左下角的 + 添加。"))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .sheet(isPresented: $state.isAddingProvider) {
-            AddProviderSheet(scope: scope) { selectedID = $0 }
+            AddProviderSheet(scope: scope) { state.selectedServiceID = $0 }
                 .environment(state)
         }
         .confirmationDialog(
@@ -84,13 +89,13 @@ struct ServicesSettingsView: View {
             Button("移除", role: .destructive) {
                 if let id = selectedID {
                     state.removeProvider(id)
-                    selectedID = state.orderedProviders(for: scope).first?.id
+                    state.selectedServiceID = state.orderedProviders(for: scope).first?.id
                 }
             }
         } message: {
             Text("它的 API Key 也会从钥匙串中删除。")
         }
-        .onAppear { selectedID = selectedID ?? ordered.first?.id }
+        .onAppear { state.selectedServiceID = state.selectedServiceID ?? ordered.first?.id }
     }
 
     private func binding(for id: String) -> Binding<ProviderConfig>? {
@@ -135,7 +140,9 @@ private struct ServiceRow: View {
     }
 
     @ViewBuilder private var badge: some View {
-        if !config.requiresAPIKey {
+        if config.kind == .codex {
+            Badge(text: "账户", color: .blue)
+        } else if !config.requiresAPIKey {
             Badge(text: "本地", color: .green)
         } else if !state.hasAPIKey(config) {
             Badge(text: "缺 Key", color: .orange)
@@ -234,7 +241,7 @@ private struct ServiceDetailView: View {
                 TextField("名称", text: $config.name)
                     .multilineTextAlignment(.trailing)
                 Picker("接口类型", selection: $config.kind) {
-                    ForEach(ProviderKind.allCases) { Text($0.displayName).tag($0) }
+                    ForEach(ProviderKind.allCases.filter { $0 != .codex }) { Text($0.displayName).tag($0) }
                 }
             }
 
@@ -354,6 +361,7 @@ private struct ServiceDetailView: View {
         case .openAICompatible: return "OpenAI 兼容接口"
         case .anthropic: return "Anthropic Messages API"
         case .gemini: return "Gemini API"
+        case .codex: return "通过 Codex CLI 使用 ChatGPT 账户"
         }
     }
 
@@ -435,7 +443,7 @@ private struct ModelChip: View {
     }
 }
 
-private struct StatusLabelStyle: LabelStyle {
+struct StatusLabelStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 5) {
             configuration.icon.font(.system(size: 7))

@@ -121,6 +121,11 @@ public enum ProviderFactory {
         case .openAICompatible: OpenAICompatibleProvider(config: config, apiKey: apiKey, transport: transport)
         case .anthropic: AnthropicProvider(config: config, apiKey: apiKey, transport: transport)
         case .gemini: GeminiProvider(config: config, apiKey: apiKey, transport: transport)
+        case .codex:
+            switch config.codexAccess {
+            case .builtIn: ChatGPTProvider(config: config, session: .shared(for: config.id), transport: transport)
+            case .cli: CodexProvider(config: config)
+            }
         }
     }
 }
