@@ -200,7 +200,7 @@ final class PopoverController {
                 let location = NSEvent.mouseLocation
                 MainActor.assumeIsolated {
                     // 浮窗不激活本 App，点击浮窗自身的按钮也会被全局监听收到，要排除掉。
-                    guard let self, !self.isPinned, !NSApp.hasVisibleWindow(at: location) else { return }
+                    guard let self, !self.isPinned, !NSApp.ownsTopmostWindow(at: location) else { return }
                     self.close()
                 }
             }

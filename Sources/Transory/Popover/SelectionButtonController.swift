@@ -1,5 +1,10 @@
 import AppKit
+import OSLog
 import SwiftUI
+
+/// 划词按钮的诊断日志（notice 级别，系统会留存）。
+/// 查看：log show --last 10m --predicate 'subsystem == "app.transory.Transory"'
+let selectionLog = Logger(subsystem: "app.transory.Transory", category: "selection")
 
 /// 在其他 App 里选中文字后，在鼠标旁显示一个小的翻译按钮；点击后打开划词浮窗。
 ///
@@ -10,8 +15,8 @@ final class SelectionButtonController {
     static let size = NSSize(width: 30, height: 30)
     /// 按钮自动消失的时间。
     private static let lifetime: Duration = .seconds(4)
-    /// 不支持读取选区、但多半是文本区域的控件类型。
-    private static let textLikeRoles: Set<String> = ["AXWebArea", "AXTextArea", "AXTextField", "AXStaticText", "AXGroup"]
+    /// 松开鼠标后读取选区的时机：有些 App 更新选区比较慢，读不到就再等一会儿重试。
+    private static let retryDelays: [Duration] = [.milliseconds(60), .milliseconds(120), .milliseconds(220)]
 
     private let state: AppState
     private let popover: PopoverController
@@ -49,7 +54,11 @@ final class SelectionButtonController {
 
     private func handleMouse(type: NSEvent.EventType, location: NSPoint, clickCount: Int, shift: Bool) {
         // 点在本 App 自己的窗口（翻译按钮、浮窗）上时不处理，否则按钮会在被点到之前就收起。
-        guard !NSApp.hasVisibleWindow(at: location) else { return }
+        // 只看最上层的窗口：被其他 App 挡住的主窗口、设置窗口不算。
+        guard !NSApp.ownsTopmostWindow(at: location) else {
+            if type == .leftMouseUp { selectionLog.notice("忽略：鼠标在 Transory 自己的窗口上") }
+            return
+        }
         switch type {
         case .leftMouseDown:
             hide()
@@ -65,20 +74,60 @@ final class SelectionButtonController {
     }
 
     private func checkSelection(at location: NSPoint) async {
-        guard state.showSelectionButton,
-              Permissions.isGranted(.accessibility),
-              NSWorkspace.shared.frontmostApplication?.processIdentifier != ProcessInfo.processInfo.processIdentifier
+        guard state.showSelectionButton else { return }
+        guard Permissions.isGranted(.accessibility) else {
+            selectionLog.notice("未显示：没有辅助功能权限")
+            return
+        }
+        guard let frontApp = NSWorkspace.shared.frontmostApplication,
+              frontApp.processIdentifier != ProcessInfo.processInfo.processIdentifier
         else { return }
-        // 等目标 App 更新完选区。
-        try? await Task.sleep(for: .milliseconds(80))
+        let app = frontApp.localizedName ?? "?"
 
-        switch SelectionReader.accessibilitySelection() {
-        case .text(let text):
-            show(at: location, text: text)
-        case .unsupported(let role) where role.map(Self.textLikeRoles.contains) == true:
-            show(at: location, text: nil)
-        case .empty, .unsupported:
+        // 0. Chrome、Electron 应用默认不开放网页的辅助功能信息，先请求开放，并给它一点时间建立。
+        if SelectionReader.enableWebAccessibility(for: frontApp) {
+            selectionLog.notice("已请求 \(app, privacy: .public) 开放网页辅助功能信息")
+            try? await Task.sleep(for: .milliseconds(250))
+        }
+
+        // 1. 读聚焦控件的选区；还没更新就稍等重试。
+        var last = SelectionReader.AXSelection.unsupported(role: nil)
+        for delay in Self.retryDelays {
+            try? await Task.sleep(for: delay)
+            last = SelectionReader.accessibilitySelection(in: frontApp)
+            switch last {
+            case .text(let text):
+                selectionLog.notice("显示按钮：\(app, privacy: .public) 聚焦控件有选中文字（\(text.count) 字）")
+                show(at: location, text: text)
+                return
+            case .unsupported(let role?) where SelectionReader.textLikeRoles.contains(role):
+                selectionLog.notice("显示按钮：\(app, privacy: .public) 的 \(role, privacy: .public) 不支持读取选区，点击时用 ⌘C 读取")
+                show(at: location, text: nil)
+                return
+            case .empty, .unsupported(nil):
+                continue
+            case .unsupported:
+                break
+            }
             break
+        }
+
+        // 2. 聚焦控件读不到：改读鼠标所在位置的控件。
+        switch SelectionReader.selectionUnderMouse(location) {
+        case .text(let text):
+            selectionLog.notice("显示按钮：\(app, privacy: .public) 鼠标下的控件有选中文字（\(text.count) 字）")
+            show(at: location, text: text)
+        case .unsupported(let role?):
+            selectionLog.notice("显示按钮：\(app, privacy: .public) 鼠标下是 \(role, privacy: .public)，点击时用 ⌘C 读取")
+            show(at: location, text: nil)
+        default:
+            // 3. 浏览器、Electron 应用读不到时仍显示按钮，点击时用 ⌘C 读取；读不到就提示音。
+            if SelectionReader.isWebContentApp(frontApp) {
+                selectionLog.notice("显示按钮：\(app, privacy: .public) 读不到选区信息，点击时用 ⌘C 读取")
+                show(at: location, text: nil)
+            } else {
+                selectionLog.notice("未显示：\(app, privacy: .public) 没有读到选中文字（聚焦控件：\(String(describing: last), privacy: .public)）")
+            }
         }
     }
 
@@ -176,8 +225,24 @@ private struct SelectionButton: View {
 }
 
 extension NSApplication {
-    /// 屏幕上该位置是否有本 App 的可见窗口。
-    func hasVisibleWindow(at location: NSPoint) -> Bool {
-        windows.contains { $0.isVisible && $0.frame.contains(location) }
+    /// 屏幕上该位置最上层的窗口是否属于本 App。被其他 App 挡住的窗口不算。
+    ///
+    /// 不能用 `NSWindow.windowNumber(at:belowWindowWithWindowNumber:)`：它只看本 App 自己的窗口，
+    /// 主窗口被其他 App 挡住时也会命中，导致在那片区域选字时按钮永远不出现。
+    /// 这里用系统窗口列表（按从前到后排序）找真正最上层的窗口。
+    func ownsTopmostWindow(at location: NSPoint) -> Bool {
+        let primaryHeight = NSScreen.screens.first?.frame.maxY ?? 0
+        // 窗口列表用左上角为原点的全局坐标。
+        let point = CGPoint(x: location.x, y: primaryHeight - location.y)
+        let infos = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]] ?? []
+        for info in infos {
+            guard (info[kCGWindowAlpha as String] as? Double ?? 1) > 0,
+                  let bounds = info[kCGWindowBounds as String] as? NSDictionary,
+                  let rect = CGRect(dictionaryRepresentation: bounds),
+                  rect.contains(point)
+            else { continue }
+            return (info[kCGWindowOwnerPID as String] as? Int32) == ProcessInfo.processInfo.processIdentifier
+        }
+        return false
     }
 }
