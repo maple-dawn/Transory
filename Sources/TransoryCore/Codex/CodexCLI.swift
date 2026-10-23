@@ -100,6 +100,7 @@ public enum CodexCLI {
 
     // MARK: - 浏览器登录
 
+    #if os(macOS)
     /// 一次 `codex login`：它会打开浏览器走 OAuth，并在本机等待回调，授权完成后退出。
     public final class LoginSession: @unchecked Sendable {
         private let process = Process()
@@ -155,6 +156,7 @@ public enum CodexCLI {
             if let found { handler?(found) }
         }
     }
+    #endif
 
     static func firstURL(in text: String) -> URL? {
         guard let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else { return nil }

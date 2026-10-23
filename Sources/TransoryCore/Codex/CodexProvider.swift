@@ -112,6 +112,7 @@ public struct CodexProvider: TranslationProvider {
     }
 }
 
+#if os(macOS)
 /// 让翻译被取消时能结束正在运行的 Codex 进程。
 final class ProcessBox: @unchecked Sendable {
     private let lock = NSLock()
@@ -168,3 +169,15 @@ extension CodexCLI {
         }.value
     }
 }
+#else
+/// iOS 不能启动子进程：Codex CLI 只在 macOS 上可用。
+final class ProcessBox: Sendable {
+    func terminate() {}
+}
+
+extension CodexCLI {
+    static func run(_ executable: URL, _ arguments: [String], stdin: Data?, box: ProcessBox) async throws -> Output {
+        throw ProviderError.api(message: "Codex CLI 只在 macOS 上可用")
+    }
+}
+#endif

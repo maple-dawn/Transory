@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "Transory",
     defaultLocalization: "zh-Hans",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS(.v14), .iOS(.v17)],
     products: [
         .executable(name: "Transory", targets: ["Transory"]),
         .library(name: "TransoryCore", targets: ["TransoryCore"]),
