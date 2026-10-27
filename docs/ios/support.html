@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,10 +14,21 @@
   p, li { margin: 6px 0; }
   hr { border: 0; border-top: 1px solid var(--line); margin: 48px 0; }
   a { color: var(--accent); }
+  .lang { text-align: right; font-size: 14px; margin: 0 0 16px; }
 </style>
 </head>
 <body>
 <main>
+<p class="lang"><a href="#zh">简体中文</a></p>
+<h1>Transory for iPhone Support</h1>
+<p>For questions or feedback, open an issue on <a href="https://github.com/maple-dawn/Transory/issues">GitHub Issues</a> and mention the iPhone app, your iOS version, and the AI service you use.</p>
+<p><strong>How much does it cost?</strong> The app is a one-time purchase with no subscription or in-app purchases. Translations use your own API key and are billed by the AI provider.</p>
+<p><strong>Where do I get an API key?</strong> From the developer console of DeepSeek, Anthropic (Claude), Google AI Studio (Gemini), or OpenAI. Enter it in Settings › Model Services.</p>
+<p><strong>Who receives my text?</strong> Only the providers you authorize. See the <a href="privacy.html">Privacy Policy</a>.</p>
+
+<hr>
+
+<section id="zh" lang="zh-CN">
 <h1>Transory for iPhone 支持</h1>
 <p>遇到问题或有建议，请在 <a href="https://github.com/maple-dawn/Transory/issues">GitHub Issues</a> 提交，注明是 iPhone 版、系统版本和使用的 AI 服务。</p>
 
@@ -27,14 +38,7 @@
 <p><strong>提示「尚未填写 API Key」或请求失败？</strong>检查 Key 是否正确、账户是否有余额，以及模型名是否可用。可以在服务详情中点「从服务商获取模型列表」验证。</p>
 <p><strong>怎么用电脑上的本地模型？</strong>在电脑上运行 Ollama 或 LM Studio 并允许局域网访问，在 App 中添加对应服务，把接口地址改成电脑的局域网 IP，例如 http://192.168.1.2:11434/v1。</p>
 <p><strong>我的数据会发给谁？</strong>只发给你授权的服务商。详见 <a href="privacy.html">隐私政策</a>。</p>
-
-<hr>
-
-<h1>Transory for iPhone Support</h1>
-<p>For questions or feedback, open an issue on <a href="https://github.com/maple-dawn/Transory/issues">GitHub Issues</a> and mention the iPhone app, your iOS version, and the AI service you use.</p>
-<p><strong>How much does it cost?</strong> The app is a one-time purchase with no subscription or in-app purchases. Translations use your own API key and are billed by the AI provider.</p>
-<p><strong>Where do I get an API key?</strong> From the developer console of DeepSeek, Anthropic (Claude), Google AI Studio (Gemini), or OpenAI. Enter it in Settings › Model Services.</p>
-<p><strong>Who receives my text?</strong> Only the providers you authorize. See the <a href="privacy.html">Privacy Policy</a>.</p>
+</section>
 </main>
 </body>
 </html>

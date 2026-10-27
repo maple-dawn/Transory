@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,10 +15,54 @@
   .meta { color: var(--muted); font-size: 14px; }
   hr { border: 0; border-top: 1px solid var(--line); margin: 48px 0; }
   a { color: var(--accent); }
+  .lang { text-align: right; font-size: 14px; margin: 0 0 16px; }
 </style>
 </head>
 <body>
 <main>
+<p class="lang"><a href="#zh">简体中文</a></p>
+<h1>Transory for iPhone Privacy Policy</h1>
+<p class="meta">Effective date: October 26, 2026</p>
+
+<p>Transory is a translation app that uses AI services you configure yourself (for example DeepSeek, Claude, Gemini, OpenAI, or a local model running on your own network). Transory has no servers of its own, and the developer does not collect, store, or view any of your content.</p>
+
+<h2>What is sent, and to whom</h2>
+<ul>
+  <li><strong>Content:</strong> the text you type or paste for translation, and text recognized on your device from photos you take. Photos themselves are never uploaded.</li>
+  <li><strong>Recipients:</strong> only the AI providers you add, configure with your own API key, and explicitly authorize on the data-sharing consent screen. Providers you have not authorized receive nothing.</li>
+  <li><strong>How:</strong> content is sent directly from your device to the provider over an encrypted connection (HTTPS), never through any server operated by the developer. When you use a local model on your network, content stays on your local network.</li>
+  <li><strong>Provider handling:</strong> each provider processes content under its own privacy policy, linked from the consent screen and from Settings › Data &amp; Privacy.</li>
+</ul>
+
+<h2>Data stored on your device</h2>
+<ul>
+  <li><strong>API keys</strong> are stored in the device Keychain and used only to call the matching provider.</li>
+  <li><strong>Translation history and favorites</strong> stay on your device and can be deleted at any time.</li>
+  <li><strong>Settings</strong> (services, scenes, consent status) are stored locally.</li>
+</ul>
+
+<h2>What we don't do</h2>
+<ul>
+  <li>No analytics, crash reporting, or device identifiers.</li>
+  <li>No advertising and no tracking across apps or websites.</li>
+  <li>We do not sell or share your data.</li>
+</ul>
+
+<h2>Camera and local network</h2>
+<p>The camera is used only when you choose photo translation; text recognition runs on device. Local network access is used only to reach Ollama or LM Studio running on your own computer.</p>
+
+<h2>Your choices</h2>
+<p>You can revoke any provider's authorization in Settings › Data &amp; Privacy › AI Service Data Authorization, or turn on "Confirm before each send" to review the text and recipients before every translation.</p>
+
+<h2>Children</h2>
+<p>Transory is not directed to children under 13 and does not knowingly collect personal information from children.</p>
+
+<h2>Changes and contact</h2>
+<p>We will update this page and its effective date if this policy changes. For questions, contact us via <a href="https://github.com/maple-dawn/Transory/issues">GitHub Issues</a>.</p>
+
+<hr>
+
+<section id="zh" lang="zh-CN">
 <h1>Transory for iPhone 隐私政策</h1>
 <p class="meta">生效日期：2026 年 10 月 26 日</p>
 
@@ -58,47 +102,7 @@
 
 <h2>政策变更与联系方式</h2>
 <p>本政策如有变更，会更新此页面并修改生效日期。如有问题，请通过 <a href="https://github.com/maple-dawn/Transory/issues">GitHub Issues</a> 联系我们。</p>
-
-<hr>
-
-<h1>Transory for iPhone Privacy Policy</h1>
-<p class="meta">Effective date: October 26, 2026</p>
-
-<p>Transory is a translation app that uses AI services you configure yourself (for example DeepSeek, Claude, Gemini, OpenAI, or a local model running on your own network). Transory has no servers of its own, and the developer does not collect, store, or view any of your content.</p>
-
-<h2>What is sent, and to whom</h2>
-<ul>
-  <li><strong>Content:</strong> the text you type or paste for translation, and text recognized on your device from photos you take. Photos themselves are never uploaded.</li>
-  <li><strong>Recipients:</strong> only the AI providers you add, configure with your own API key, and explicitly authorize on the data-sharing consent screen. Providers you have not authorized receive nothing.</li>
-  <li><strong>How:</strong> content is sent directly from your device to the provider over an encrypted connection (HTTPS), never through any server operated by the developer. When you use a local model on your network, content stays on your local network.</li>
-  <li><strong>Provider handling:</strong> each provider processes content under its own privacy policy, linked from the consent screen and from Settings › Data &amp; Privacy.</li>
-</ul>
-
-<h2>Data stored on your device</h2>
-<ul>
-  <li><strong>API keys</strong> are stored in the device Keychain and used only to call the matching provider.</li>
-  <li><strong>Translation history and favorites</strong> stay on your device and can be deleted at any time.</li>
-  <li><strong>Settings</strong> (services, scenes, consent status) are stored locally.</li>
-</ul>
-
-<h2>What we don't do</h2>
-<ul>
-  <li>No analytics, crash reporting, or device identifiers.</li>
-  <li>No advertising and no tracking across apps or websites.</li>
-  <li>We do not sell or share your data.</li>
-</ul>
-
-<h2>Camera and local network</h2>
-<p>The camera is used only when you choose photo translation; text recognition runs on device. Local network access is used only to reach Ollama or LM Studio running on your own computer.</p>
-
-<h2>Your choices</h2>
-<p>You can revoke any provider's authorization in Settings › Data &amp; Privacy › AI Service Data Authorization, or turn on "Confirm before each send" to review the text and recipients before every translation.</p>
-
-<h2>Children</h2>
-<p>Transory is not directed to children under 13 and does not knowingly collect personal information from children.</p>
-
-<h2>Changes and contact</h2>
-<p>We will update this page and its effective date if this policy changes. For questions, contact us via <a href="https://github.com/maple-dawn/Transory/issues">GitHub Issues</a>.</p>
+</section>
 </main>
 </body>
 </html>
