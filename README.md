@@ -11,6 +11,7 @@
   <img src="https://img.shields.io/badge/Swift-6-orange" alt="Swift 6">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
   <a href="https://github.com/maple-dawn/Transory/releases"><img src="https://img.shields.io/github/v/release/maple-dawn/Transory?include_prereleases" alt="Release"></a>
+  <a href="https://apps.apple.com/app/id6827446402"><img src="https://img.shields.io/badge/iPhone-App_Store-0D96F6?logo=apple" alt="iPhone app on the App Store"></a>
 </p>
 
 <p align="center">
@@ -26,6 +27,22 @@
 It works with cloud models such as Claude, OpenAI, Gemini, DeepSeek, OpenRouter, Kimi, Zhipu GLM and Qwen; local models through Ollama and LM Studio; any OpenAI- or Anthropic-compatible endpoint; and you can **sign in with your ChatGPT account** to translate with your subscription instead of an API key.
 
 > The interface is currently in Simplified Chinese.
+
+## Transory for iPhone
+
+Transory is also on the App Store for iPhone (iOS 17+). Use your own API keys to compare DeepSeek, Claude, Gemini, OpenAI and other models side by side, or point the camera at a menu or sign: text is recognized on device and the translation is laid over the photo. You can also connect to Ollama or LM Studio running on your Mac over the local network.
+
+Free to download with a 7-day free trial of every feature, then a one-time US$1.99 unlock — no subscription. The iPhone app is not open source.
+
+<p align="center">
+  <a href="https://apps.apple.com/app/id6827446402"><img src="https://img.shields.io/badge/App_Store-Download_for_iPhone-0D96F6?logo=appstore&logoColor=white" alt="Download on the App Store"></a>
+</p>
+
+<p align="center">
+  <img src="docs/ios/screenshots/01-translate.jpg" width="260" alt="Comparing several models side by side">
+  &nbsp;
+  <img src="docs/ios/screenshots/02-camera.jpg" width="260" alt="Photo translation laid over the original text">
+</p>
 
 ## Screenshots
 

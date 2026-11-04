@@ -11,6 +11,7 @@
   <img src="https://img.shields.io/badge/Swift-6-orange" alt="Swift 6">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
   <a href="https://github.com/maple-dawn/Transory/releases"><img src="https://img.shields.io/github/v/release/maple-dawn/Transory?include_prereleases" alt="Release"></a>
+  <a href="https://apps.apple.com/app/id6827446402"><img src="https://img.shields.io/badge/iPhone-App_Store-0D96F6?logo=apple" alt="iPhone 版"></a>
 </p>
 
 <p align="center">
@@ -24,6 +25,22 @@
 **Transory** 是一款 macOS 原生翻译工具：选中文字就能翻译，截图也能翻译，同一句话可以交给多个 AI 模型同时翻译、对比结果。
 
 支持 Claude、OpenAI、Gemini、DeepSeek、OpenRouter、Kimi、智谱 GLM、通义千问等云端模型，Ollama、LM Studio 等本地模型，任意 OpenAI / Anthropic 兼容接口，也可以直接**登录 ChatGPT 账户**，用订阅额度翻译，不需要 API Key。
+
+## iPhone 版
+
+Transory 也有 iPhone 版，已在 App Store 上架（iOS 17 及以上）。填上自己的 API Key，就能把 DeepSeek、Claude、Gemini、OpenAI 等模型的译文并排对比；拍照翻译在本机识别文字，译文直接盖在原图上；也能通过局域网连接 Mac 上的 Ollama、LM Studio。
+
+免费下载，全部功能免费试用 7 天，之后 US$1.99 一次性永久解锁，没有订阅。iPhone 版不开源。没有上架中国大陆区，需要非国区 Apple ID。
+
+<p align="center">
+  <a href="https://apps.apple.com/app/id6827446402"><img src="https://img.shields.io/badge/App_Store-iPhone_版下载-0D96F6?logo=appstore&logoColor=white" alt="在 App Store 下载"></a>
+</p>
+
+<p align="center">
+  <img src="docs/ios/screenshots/01-translate.jpg" width="260" alt="多模型译文并排对比">
+  &nbsp;
+  <img src="docs/ios/screenshots/02-camera.jpg" width="260" alt="拍照翻译，译文覆盖原图">
+</p>
 
 ## 截图
 
