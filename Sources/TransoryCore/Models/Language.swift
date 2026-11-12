@@ -25,11 +25,19 @@ public struct Language: Hashable, Codable, Sendable, Identifiable {
     public static let german = Language(code: "de", name: "德语", promptName: "German")
     public static let spanish = Language(code: "es", name: "西班牙语", promptName: "Spanish")
     public static let russian = Language(code: "ru", name: "俄语", promptName: "Russian")
+    public static let portuguese = Language(code: "pt", name: "葡萄牙语", promptName: "Portuguese")
+    public static let italian = Language(code: "it", name: "意大利语", promptName: "Italian")
+    public static let vietnamese = Language(code: "vi", name: "越南语", promptName: "Vietnamese")
+    public static let thai = Language(code: "th", name: "泰语", promptName: "Thai")
+    public static let indonesian = Language(code: "id", name: "印尼语", promptName: "Indonesian")
+    public static let arabic = Language(code: "ar", name: "阿拉伯语", promptName: "Arabic")
+    public static let turkish = Language(code: "tr", name: "土耳其语", promptName: "Turkish")
 
     /// 可作为目标语言的列表（不含自动检测）。
     public static let targets: [Language] = [
         .simplifiedChinese, .traditionalChinese, .english, .japanese, .korean,
-        .french, .german, .spanish, .russian,
+        .french, .german, .spanish, .russian, .portuguese, .italian,
+        .vietnamese, .thai, .indonesian, .arabic, .turkish,
     ]
 
     /// 可作为源语言的列表。

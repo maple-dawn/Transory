@@ -9,6 +9,16 @@ import Testing
         #expect(LanguageDetector.detect("最好的工具会融入工作流之中，无需切换标签页。") == .simplifiedChinese)
     }
 
+    @Test func detectsAddedLanguages() {
+        #expect(LanguageDetector.detect("As boas ferramentas não atrapalham: aparecem quando você precisa delas.") == .portuguese)
+        #expect(LanguageDetector.detect("Gli strumenti migliori non intralciano: ci sono quando servono.") == .italian)
+        #expect(LanguageDetector.detect("Công cụ tốt không cản đường bạn: chúng có mặt khi bạn cần.") == .vietnamese)
+        #expect(LanguageDetector.detect("เครื่องมือที่ดีจะไม่ขวางทาง มันจะอยู่ตรงนั้นเมื่อคุณต้องการ") == .thai)
+        #expect(LanguageDetector.detect("Alat yang baik tidak menghalangi: selalu ada saat Anda membutuhkannya.") == .indonesian)
+        #expect(LanguageDetector.detect("الأدوات الجيدة لا تعترض طريقك، فهي حاضرة عندما تحتاج إليها.") == .arabic)
+        #expect(LanguageDetector.detect("İyi araçlar yolunuza çıkmaz; ihtiyaç duyduğunuzda oradadır.") == .turkish)
+    }
+
     @Test func switchesTargetWhenSourceAlreadyMatches() {
         let chinese = "最好的工具会融入工作流之中，无需切换标签页。"
         #expect(LanguageDetector.resolveTarget(for: chinese, source: .auto, target: .simplifiedChinese) == .english)
